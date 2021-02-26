@@ -2,28 +2,29 @@ import React, { useEffect, useState } from "react";
 import { useInput } from "./useInput";
 import axios from "axios";
 
-
 export const App = () => {
   const { resetInput, ...todo } = useInput();
-  const [socket, setSocket] = useState()
+  const [socket, setSocket] = useState();
   const [todos, setTodos] = useState([]);
-  React.useEffect(() => {
-    const webSocket = new WebSocket("ws://localhost:5000/")
-    setSocket(webSocket)
-    webSocket.onmessage = event => {
-      const response = JSON.parse(event.data)
-      setTodos(response)
-    }
-  }, [])
+  useEffect(() => {
+    const webSocket = new WebSocket("ws://localhost:5000/");
+    setSocket(webSocket);
+    webSocket.onmessage = (event) => {
+      const response = JSON.parse(event.data);
+      setTodos(response);
+    };
+  }, []);
   const addTodo = (e) => {
     e.preventDefault();
     if (socket) {
-      socket.send(JSON.stringify({data:todo.value, method:"add"}))
-      resetInput()
+      socket.send(JSON.stringify({ data: todo.value, method: "add" }));
+      resetInput();
     }
   };
   const removeTodo = (id) => () => {
-    socket.send(JSON.stringify({data:id, method:"remove"}))
+    if (socket) {
+      socket.send(JSON.stringify({ data: id, method: "remove" }));
+    }
   };
   useEffect(() => {
     const getTodos = async () => {
