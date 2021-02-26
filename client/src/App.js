@@ -14,6 +14,16 @@ export const App = () => {
       setTodos(response);
     };
   }, []);
+  useEffect(() => {
+    const getTodos = async () => {
+      const { data } = await axios.get("http://localhost:5000/");
+      console.log(data);
+      if (data) {
+        setTodos(data);
+      }
+    };
+    getTodos();
+  }, []);
   const addTodo = (e) => {
     e.preventDefault();
     if (socket) {
@@ -26,16 +36,6 @@ export const App = () => {
       socket.send(JSON.stringify({ data: id, method: "remove" }));
     }
   };
-  useEffect(() => {
-    const getTodos = async () => {
-      const { data } = await axios.get("http://localhost:5000/");
-      console.log(data);
-      if (data) {
-        setTodos(data);
-      }
-    };
-    getTodos();
-  }, []);
   return (
     <div className="app">
       <form onSubmit={addTodo}>
